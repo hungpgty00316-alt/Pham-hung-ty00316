@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMart - Danh Mục Sản Phẩm</title>
+  <script>(function(){try{if(localStorage.getItem("giaoDien")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();</script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-trong">
+      <a href="index.html" class="logo">⚡ TechMart</a>
+
+      <ul class="menu-nav">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html" class="active">Sản Phẩm</a></li>
+        <li><a href="cart.html">Giỏ Hàng</a></li>
+        <li><a href="upload-product.html">Up Sản Phẩm</a></li>
+        <li><a href="login.html">Đăng Nhập</a></li>
+        <li><a href="account.html">Tài Khoản</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <a href="products.html?view=yeu-thich" class="icon-tim">
+          ❤ <span id="soLuongYeuThich">0</span>
+        </a>
+
+        <a href="cart.html" class="icon-gio">
+          🛒 <span id="soLuongGio">0</span>
+        </a>
+
+        <button type="button" class="btn-theme-toggle" onclick="doiGiaoDien()" title="Chuyển giao diện Sáng/Tối">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG TRANG SẢN PHẨM -->
+  <div class="container">
+
+    <h1 class="tieu-de-trang">Danh Mục Sản Phẩm</h1>
+
+    <!-- Ô tìm kiếm sản phẩm -->
+    <div class="khu-vuc-timkiem">
+      <input
+        type="text"
+        id="inputTimKiem"
+        placeholder="🔍 Nhập tên sản phẩm cần tìm..."
+        onkeyup="timKiem()"
+      >
+    </div>
+
+    <!-- Bộ lọc theo nhóm & sắp xếp -->
+    <div class="khu-vuc-loc">
+      <div class="khu-vuc-loc-nhom">
+        <button class="btn-loc active" onclick="locDanhMuc('tat-ca')">Tất Cả</button>
+        <button class="btn-loc" onclick="locDanhMuc('hot')">🔥 Sản Phẩm Hot</button>
+        <button class="btn-loc" onclick="locDanhMuc('moi')">✨ Sản Phẩm Mới</button>
+        <button class="btn-loc" onclick="locDanhMuc('sale')">🏷️ Khuyến Mãi</button>
+        <button class="btn-loc" data-nhom="yeu-thich" onclick="locDanhMuc('yeu-thich')">❤️ Yêu Thích</button>
+      </div>
+      <select class="chon-sapxep" id="chonSapXep" onchange="sapXepSanPham(this.value)">
+        <option value="default">Sắp xếp: Mặc định</option>
+        <option value="gia-tang">Giá: Tăng dần</option>
+        <option value="gia-giam">Giá: Giảm dần</option>
+        <option value="ten-az">Tên: A - Z</option>
+        <option value="danhgia">Đánh giá cao nhất</option>
+      </select>
+    </div>
+
+    <!-- Lưới sản phẩm -->
+    <div id="danhSachSanPham" class="luoi-san-pham">
+      <!-- JS sẽ render sản phẩm vào đây -->
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 TechMart Store - WEB1044 Assignment - FPT Polytechnic</p>
+  </footer>
+
+  <!-- Nhúng file JavaScript -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

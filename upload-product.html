@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMart - Up & Quản Lý Sản Phẩm</title>
+  <script>(function(){try{if(localStorage.getItem("giaoDien")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();</script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+<header>
+    <div class="header-trong">
+      <a href="index.html" class="logo">⚡ TechMart</a>
+
+      <ul class="menu-nav">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html">Sản Phẩm</a></li>
+        <li><a href="cart.html">Giỏ Hàng</a></li>
+        <li><a href="upload-product.html" class="active">Up Sản Phẩm</a></li>
+        <li><a href="login.html">Đăng Nhập</a></li>
+        <li><a href="account.html">Tài Khoản</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <a href="products.html?view=yeu-thich" class="icon-tim">
+          ❤ <span id="soLuongYeuThich">0</span>
+        </a>
+
+        <a href="cart.html" class="icon-gio">
+          🛒 <span id="soLuongGio">0</span>
+        </a>
+
+        <button type="button" class="btn-theme-toggle" onclick="doiGiaoDien()" title="Chuyển giao diện Sáng/Tối">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG TRANG UP SẢN PHẨM -->
+  <div class="container">
+
+    <h1 class="tieu-de-trang">Up & Quản Lý Sản Phẩm</h1>
+
+    <!-- SECTION 1: FORM UP SẢN PHẨM & CARD PREVIEW -->
+    <div class="khu-vuc-upload">
+
+      <!-- CỘT 1: FORM NHẬP SẢN PHẨM -->
+      <div class="khung-form-up" id="khungFormUp">
+        <h2 id="tieu-de-form-up">📤 Up Sản Phẩm Mới</h2>
+
+        <form id="formUpSanPham" onsubmit="return xuLyUpSanPham(event)">
+
+          <!-- Tên sản phẩm -->
+          <div class="form-nhom">
+            <label for="up-ten">Tên Sản Phẩm *</label>
+            <input type="text" id="up-ten" placeholder="Ví dụ: iPhone 16 Pro Max 256GB" oninput="capNhatPreviewCard()">
+            <span id="loi-up-ten" class="thong-bao-loi"></span>
+          </div>
+
+          <!-- Danh mục & Nhóm sản phẩm (2 Cột) -->
+          <div class="hang-form-2col">
+            <div class="form-nhom">
+              <label for="up-danhmuc">Danh Mục *</label>
+              <select id="up-danhmuc" onchange="capNhatPreviewCard()">
+                <option value="Điện Thoại">📱 Điện Thoại</option>
+                <option value="Laptop">💻 Laptop</option>
+                <option value="Đồng Hồ">⌚ Đồng Hồ</option>
+                <option value="Phụ Kiện">🎧 Phụ Kiện</option>
+                <option value="Khác">🔌 Thiết Bị Khác</option>
+              </select>
+            </div>
+
+            <div class="form-nhom">
+              <label for="up-nhom">Nhóm Hiển Thị *</label>
+              <select id="up-nhom" onchange="capNhatPreviewCard()">
+                <option value="hot">🔥 Sản Phẩm Hot</option>
+                <option value="moi">✨ Sản Phẩm Mới</option>
+                <option value="sale">🏷️ Khuyến Mãi (Sale)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Giá bán & Giá cũ (2 Cột) -->
+          <div class="hang-form-2col">
+            <div class="form-nhom">
+              <label for="up-gia">Giá Bán (VNĐ) *</label>
+              <input type="number" id="up-gia" placeholder="Ví dụ: 29990000" min="0" step="1000" oninput="capNhatPreviewCard()">
+              <span id="loi-up-gia" class="thong-bao-loi"></span>
+            </div>
+
+            <div class="form-nhom">
+              <label for="up-giacu">Giá Niêm Yết / Giá Cũ (VNĐ)</label>
+              <input type="number" id="up-giacu" placeholder="Ví dụ: 34990000 (không bắt buộc)" min="0" step="1000" oninput="capNhatPreviewCard()">
+              <span id="loi-up-giacu" class="thong-bao-loi"></span>
+            </div>
+          </div>
+
+          <!-- Chọn nguồn hình ảnh -->
+          <div class="form-nhom">
+            <label>Hình Ảnh Sản Phẩm *</label>
+            <span id="loi-up-anh" class="thong-bao-loi"></span>
+            
+            <div class="tuy-chon-anh">
+              <label><input type="radio" name="kieu-anh" id="radio-sample" value="sample" checked onchange="doiKieuHinhAnh()"> 🖼️ Ảnh mẫu sẵn</label>
+              <label><input type="radio" name="kieu-anh" id="radio-url" value="url" onchange="doiKieuHinhAnh()"> 🔗 Link URL</label>
+              <label><input type="radio" name="kieu-anh" id="radio-file" value="file" onchange="doiKieuHinhAnh()"> 📁 Upload File</label>
+            </div>
+
+            <!-- Ô chọn ảnh mẫu -->
+            <div id="box-anh-sample">
+              <select id="up-sample-anh" onchange="capNhatPreviewCard()">
+                <option value="images/iphone15.jpg">📱 iPhone 15 Pro Max (images/iphone15.jpg)</option>
+                <option value="images/macbook.jpg">💻 MacBook Pro M3 (images/macbook.jpg)</option>
+                <option value="images/samsung.jpg">📱 Samsung Galaxy S24 (images/samsung.jpg)</option>
+                <option value="images/watch.jpg">⌚ Apple Watch Ultra (images/watch.jpg)</option>
+                <option value="images/airpods.jpg">🎧 AirPods Pro 2 (images/airpods.jpg)</option>
+                <option value="images/dell.jpg">💻 Dell XPS 13 Plus (images/dell.jpg)</option>
+                <option value="images/default.jpg">📦 Ảnh mặc định (images/default.jpg)</option>
+              </select>
+            </div>
+
+            <!-- Ô nhập URL -->
+            <div id="box-anh-url" style="display: none;">
+              <input type="text" id="up-url-anh" placeholder="Dán đường dẫn ảnh HTTP / HTTPS vào đây..." oninput="capNhatPreviewCard()">
+            </div>
+
+            <!-- Ô chọn file từ máy -->
+            <div id="box-anh-file" style="display: none;">
+              <input type="file" id="up-file-anh" accept="image/*" onchange="capNhatPreviewCard()">
+            </div>
+          </div>
+
+          <!-- Mô tả sản phẩm -->
+          <div class="form-nhom">
+            <label for="up-mota">Mô Tả Sản Phẩm</label>
+            <textarea id="up-mota" rows="3" placeholder="Nhập mô tả ngắn gọn về cấu hình, thông số, tính năng sản phẩm..." oninput="capNhatPreviewCard()"></textarea>
+          </div>
+
+          <!-- Nút submit & hủy -->
+          <div style="display: flex; gap: 10px;">
+            <button type="submit" id="btn-submit-up" class="btn-gui-form">📤 Up Sản Phẩm Ngay</button>
+            <button type="button" id="btn-huy-sua" class="btn-xoa" style="display: none; background:#757575;" onclick="huySuaSanPham()">❌ Hủy Sửa</button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- CỘT 2: LIVE CARD PREVIEW -->
+      <div class="khung-preview-sp">
+        <h3>👀 Xem Trước Hiển Thị (Live Preview)</h3>
+        
+        <div class="preview-card-wrap">
+          <div class="card-sp">
+            <img id="pv-img" src="images/iphone15.jpg" alt="Preview Image" onerror="this.src='images/default.jpg'">
+            <div class="card-sp-noidung">
+              <span id="pv-danhmuc" class="card-sp-danhmuc">Điện Thoại</span>
+              <h3 id="pv-ten" class="card-sp-ten">Tên sản phẩm mẫu</h3>
+              <p id="pv-mota" class="card-sp-mota">Mô tả chi tiết sản phẩm sẽ xuất hiện ở đây...</p>
+              <div class="card-sp-gia">
+                <span id="pv-gia" class="gia-hien">0 đ</span>
+                <span id="pv-giacu" class="gia-cu" style="display: none;"></span>
+              </div>
+              <button class="btn-them-gio" style="opacity: 0.8; cursor: not-allowed;" onclick="return false;">🛒 Thêm Vào Giỏ (Demo)</button>
+            </div>
+          </div>
+        <!-- KHUNG CÀI ĐẶT FLASH SALE (DÀNH CHO ADMIN) -->
+        <div class="khung-flashsale-admin">
+          <h3 style="color: #b71c1c; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            ⚡ Cài Đặt Flash Sale Thời Gian Thực
+          </h3>
+
+          <div class="khung-flashsale-trangthai">
+            Trạng thái: <strong id="admin-flashsale-trangthai" style="color: #2e7d32;">🟢 Đang đếm ngược</strong><br>
+            Thời gian còn lại: <strong><span id="admin-demGio">00</span>g <span id="admin-demPhut">00</span>p <span id="admin-demGiay">00</span>s</strong>
+          </div>
+
+          <!-- Nút chọn nhanh số giờ -->
+          <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 6px;">⏱️ Chọn nhanh số giờ Sale mới:</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+            <button type="button" onclick="datSoGioFlashSale(1)" class="btn-loc" style="padding: 5px 12px; font-size: 12px;">+1 Giờ</button>
+            <button type="button" onclick="datSoGioFlashSale(6)" class="btn-loc" style="padding: 5px 12px; font-size: 12px;">+6 Giờ</button>
+            <button type="button" onclick="datSoGioFlashSale(12)" class="btn-loc" style="padding: 5px 12px; font-size: 12px;">+12 Giờ</button>
+            <button type="button" onclick="datSoGioFlashSale(24)" class="btn-loc" style="padding: 5px 12px; font-size: 12px;">+24 Giờ</button>
+          </div>
+
+          <!-- Chọn ngày giờ kết thúc cụ thể -->
+          <label for="admin-flashsale-time" style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 6px;">📅 Hoặc chọn mốc kết thúc cụ thể:</label>
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <input type="datetime-local" id="admin-flashsale-time" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; flex: 1;">
+            <button type="button" onclick="datDatetimeFlashSale()" style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold;">💾 Lưu Mốc</button>
+          </div>
+
+          <!-- Nút kết thúc khẩn cấp -->
+          <button type="button" onclick="ketThucFlashSaleNgay()" style="width: 100%; background: #d32f2f; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">
+            ⏹️ Kết Thúc Flash Sale Ngay
+          </button>
+        </div>
+
+      </div>
+
+    </div><!-- /.khu-vuc-upload -->
+
+    <!-- SECTION 2: DANH SÁCH SẢN PHẨM ĐÃ UP & QUẢN LÝ -->
+    <div style="margin-top: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+        <h2 style="font-size: 20px; border-left: 4px solid #f59e0b; padding-left: 12px;">
+          📋 Danh Sách Sản Phẩm Trong Hệ Thống (<span id="tongSoSanPham">0</span>)
+        </h2>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input
+            type="text"
+            id="inputTimKiemQuanLy"
+            placeholder="🔍 Tìm nhanh trong danh sách..."
+            oninput="timKiemQuanLy()"
+            style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; min-width: 240px;"
+          >
+          <button onclick="khoiPhucDanhSachMacDinh()" class="btn-reset-data">
+            🔄 Khôi Phục Mặc Định
+          </button>
+        </div>
+      </div>
+
+      <!-- BẢNG QUẢN LÝ SẢN PHẨM -->
+      <table class="bang-gio">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Hình Ảnh</th>
+            <th>Tên Sản Phẩm & Mô Tả</th>
+            <th>Danh Mục</th>
+            <th>Nhóm</th>
+            <th>Giá Bán</th>
+            <th>Thao Tác</th>
+          </tr>
+        </thead>
+        <tbody id="bangQuanLySanPham">
+          <!-- JS sẽ render danh sách sản phẩm vào đây -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 TechMart Store - WEB1044 Assignment - FPT Polytechnic</p>
+  </footer>
+
+  <!-- Nhúng JavaScript -->
+  <script src="js/data.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

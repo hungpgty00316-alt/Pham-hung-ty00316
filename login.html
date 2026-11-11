@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMart - Đăng Nhập / Đăng Ký</title>
+  <script>(function(){try{if(localStorage.getItem("giaoDien")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();</script>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Các style login được xử lý bởi css/style.css -->
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-trong">
+      <a href="index.html" class="logo">⚡ TechMart</a>
+
+      <ul class="menu-nav">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html">Sản Phẩm</a></li>
+        <li><a href="cart.html">Giỏ Hàng</a></li>
+        <li><a href="upload-product.html">Up Sản Phẩm</a></li>
+        <li><a href="login.html" class="active">Đăng Nhập</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <a href="products.html?view=yeu-thich" class="icon-tim">
+          ❤ <span id="soLuongYeuThich">0</span>
+        </a>
+
+        <a href="cart.html" class="icon-gio">
+          🛒 <span id="soLuongGio">0</span>
+        </a>
+
+        <button type="button" class="btn-theme-toggle" onclick="doiGiaoDien()" title="Chuyển giao diện Sáng/Tối">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG CHÍNH -->
+  <div class="trang-login">
+    <div class="hop-login">
+
+      <!-- 2 NÚT TAB -->
+      <div class="tab-list">
+        <button class="tab-nut active" id="tab-dangnhap-nut" onclick="chuyenTab('dangnhap')">
+          🔑 Đăng Nhập
+        </button>
+        <button class="tab-nut" id="tab-dangky-nut" onclick="chuyenTab('dangky')">
+          📝 Đăng Ký
+        </button>
+      </div>
+
+      <!-- ==============================
+           TAB 1: ĐĂNG NHẬP
+           ============================== -->
+      <div class="tab-noidung active" id="tab-dangnhap">
+        <h2>Chào mừng trở lại!</h2>
+        <p class="mo-ta">Đăng nhập để mua sắm hoặc quản lý sản phẩm.</p>
+
+        <!-- Khung gợi ý tài khoản mẫu -->
+        <div class="khung-tai-khoan-mau">
+          <strong style="display:block; margin-bottom:6px;">🔑 Tài khoản thử nghiệm:</strong>
+          • <strong>Admin (Up sản phẩm):</strong> admin@techmart.com / admin123<br>
+          • <strong>User (Khách hàng):</strong> user@techmart.com / user123
+        </div>
+
+        <!-- Thông báo kết quả -->
+        <div id="tb-dangnhap" class="thong-bao"></div>
+
+        <!-- Form đăng nhập -->
+        <div class="form-nhom">
+          <label for="dn-email">Email</label>
+          <input type="email" id="dn-email" placeholder="Ví dụ: admin@techmart.com">
+          <span id="loi-dn-email" class="thong-bao-loi"></span>
+        </div>
+
+        <div class="form-nhom">
+          <label for="dn-matkhau">Mật Khẩu</label>
+          <input type="password" id="dn-matkhau" placeholder="Nhập mật khẩu của bạn">
+          <span id="loi-dn-matkhau" class="thong-bao-loi"></span>
+        </div>
+
+        <button class="btn-gui-form" onclick="xuLyDangNhap()">Đăng Nhập</button>
+
+        <p style="text-align:center; margin-top:16px; font-size:13px; color:#a8a29e;">
+          Chưa có tài khoản?
+          <a href="#" onclick="chuyenTab('dangky')" style="color:#d97706; font-weight:600;">Đăng ký ngay</a>
+        </p>
+      </div>
+
+      <!-- ==============================
+           TAB 2: ĐĂNG KÝ
+           ============================== -->
+      <div class="tab-noidung" id="tab-dangky">
+        <h2>Tạo tài khoản mới</h2>
+        <p class="mo-ta">Đăng ký để nhận ưu đãi và voucher giảm giá 10%.</p>
+
+        <!-- Thông báo kết quả -->
+        <div id="tb-dangky" class="thong-bao"></div>
+
+        <!-- Form đăng ký -->
+        <div class="form-nhom">
+          <label for="dk-ten">Họ và Tên</label>
+          <input type="text" id="dk-ten" placeholder="Ví dụ: Nguyễn Văn A">
+          <span id="loi-dk-ten" class="thong-bao-loi"></span>
+        </div>
+
+        <div class="form-nhom">
+          <label for="dk-email">Email</label>
+          <input type="email" id="dk-email" placeholder="Ví dụ: abc@gmail.com">
+          <span id="loi-dk-email" class="thong-bao-loi"></span>
+        </div>
+
+        <div class="form-nhom">
+          <label for="dk-matkhau">Mật Khẩu</label>
+          <input type="password" id="dk-matkhau" placeholder="Tối thiểu 6 ký tự">
+          <span id="loi-dk-matkhau" class="thong-bao-loi"></span>
+        </div>
+
+        <div class="form-nhom">
+          <label for="dk-xacnhan">Nhập Lại Mật Khẩu</label>
+          <input type="password" id="dk-xacnhan" placeholder="Nhập lại mật khẩu">
+          <span id="loi-dk-xacnhan" class="thong-bao-loi"></span>
+        </div>
+
+        <button class="btn-gui-form" onclick="xuLyDangKy()">Đăng Ký Ngay</button>
+
+        <p style="text-align:center; margin-top:16px; font-size:13px; color:#a8a29e;">
+          Đã có tài khoản?
+          <a href="#" onclick="chuyenTab('dangnhap')" style="color:#d97706; font-weight:600;">Đăng nhập</a>
+        </p>
+      </div>
+
+    </div><!-- /.hop-login -->
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 TechMart Store - WEB1044 Assignment - FPT Polytechnic</p>
+  </footer>
+
+  <!-- Nhúng JavaScript -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // =============================================
+    // 1. CHUYỂN GIỮA 2 TAB
+    // =============================================
+    function chuyenTab(tenTab) {
+      // Ẩn tất cả nội dung tab
+      var cacTab = document.querySelectorAll(".tab-noidung");
+      for (var i = 0; i < cacTab.length; i++) {
+        cacTab[i].classList.remove("active");
+      }
+
+      // Bỏ active tất cả nút tab
+      var cacNut = document.querySelectorAll(".tab-nut");
+      for (var j = 0; j < cacNut.length; j++) {
+        cacNut[j].classList.remove("active");
+      }
+
+      // Hiển thị tab được chọn
+      document.getElementById("tab-" + tenTab).classList.add("active");
+      document.getElementById("tab-" + tenTab + "-nut").classList.add("active");
+    }
+
+    // =============================================
+    // 2. HÀM LẤY DANH SÁCH TÀI KHOẢN TỪ LOCALSTORAGE
+    // =============================================
+    function layDanhSachTaiKhoan() {
+      var data = localStorage.getItem("danhSachTaiKhoan");
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) { }
+      }
+
+      // Nếu chưa có -> Khởi tạo tài khoản mẫu (Admin & User)
+      var macDinh = [
+        {
+          ten: "Quản Trị Viên (Admin)",
+          email: "admin@techmart.com",
+          matKhau: "admin123",
+          vaiTro: "admin"
+        },
+        {
+          ten: "Khách Hàng Mẫu",
+          email: "user@techmart.com",
+          matKhau: "user123",
+          vaiTro: "user"
+        }
+      ];
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(macDinh));
+      return macDinh;
+    }
+
+    function luuDanhSachTaiKhoan(danhSach) {
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(danhSach));
+    }
+
+    // =============================================
+    // 3. XỬ LÝ ĐĂNG KÝ TÀI KHOẢN MỚI
+    // =============================================
+    function xuLyDangKy() {
+      var ten = document.getElementById("dk-ten").value;
+      var email = document.getElementById("dk-email").value;
+      var matKhau = document.getElementById("dk-matkhau").value;
+      var xacNhan = document.getElementById("dk-xacnhan").value;
+      var hopLe = true;
+
+      // --- Validate Họ Tên ---
+      if (ten.trim() === "") {
+        hienThiLoi("dk-ten", "Vui lòng nhập họ và tên.");
+        hopLe = false;
+      } else {
+        xoaLoi("dk-ten");
+      }
+
+      // --- Validate Email ---
+      var regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email.trim() === "") {
+        hienThiLoi("dk-email", "Vui lòng nhập email.");
+        hopLe = false;
+      } else if (!regexEmail.test(email)) {
+        hienThiLoi("dk-email", "Email không đúng định dạng.");
+        hopLe = false;
+      } else {
+        xoaLoi("dk-email");
+      }
+
+      // --- Validate Mật Khẩu ---
+      if (matKhau.trim() === "") {
+        hienThiLoi("dk-matkhau", "Vui lòng nhập mật khẩu.");
+        hopLe = false;
+      } else if (matKhau.length < 6) {
+        hienThiLoi("dk-matkhau", "Mật khẩu phải có ít nhất 6 ký tự.");
+        hopLe = false;
+      } else {
+        xoaLoi("dk-matkhau");
+      }
+
+      // --- Validate Xác Nhận Mật Khẩu ---
+      if (xacNhan.trim() === "") {
+        hienThiLoi("dk-xacnhan", "Vui lòng nhập lại mật khẩu.");
+        hopLe = false;
+      } else if (xacNhan !== matKhau) {
+        hienThiLoi("dk-xacnhan", "Mật khẩu nhập lại không khớp.");
+        hopLe = false;
+      } else {
+        xoaLoi("dk-xacnhan");
+      }
+
+      // Nếu có lỗi thì dừng lại
+      if (!hopLe) return;
+
+      // --- Kiểm tra email đã đăng ký chưa ---
+      var danhSach = layDanhSachTaiKhoan();
+      for (var i = 0; i < danhSach.length; i++) {
+        if (danhSach[i].email === email.trim()) {
+          hienThiLoi("dk-email", "Email này đã được đăng ký rồi.");
+          return;
+        }
+      }
+
+      // --- Lưu tài khoản mới (mặc định vai trò là user) ---
+      var taiKhoanMoi = {
+        ten: ten.trim(),
+        email: email.trim(),
+        matKhau: matKhau,
+        vaiTro: "user"
+      };
+      danhSach.push(taiKhoanMoi);
+      luuDanhSachTaiKhoan(danhSach);
+
+      // --- Hiển thị thông báo thành công ---
+      var tb = document.getElementById("tb-dangky");
+      tb.textContent = "✅ Đăng ký thành công! Mời bạn đăng nhập.";
+      tb.className = "thong-bao thanh-cong";
+      tb.style.display = "block";
+
+      // Xóa form và chuyển sang tab Đăng Nhập sau 1.5 giây
+      setTimeout(function () {
+        document.getElementById("dk-ten").value = "";
+        document.getElementById("dk-email").value = "";
+        document.getElementById("dk-matkhau").value = "";
+        document.getElementById("dk-xacnhan").value = "";
+        tb.style.display = "none";
+        chuyenTab("dangnhap");
+      }, 1500);
+    }
+
+    // =============================================
+    // 4. XỬ LÝ ĐĂNG NHẬP
+    // =============================================
+    function xuLyDangNhap() {
+      var email = document.getElementById("dn-email").value;
+      var matKhau = document.getElementById("dn-matkhau").value;
+      var hopLe = true;
+
+      // --- Validate ---
+      if (email.trim() === "") {
+        hienThiLoi("dn-email", "Vui lòng nhập email.");
+        hopLe = false;
+      } else {
+        xoaLoi("dn-email");
+      }
+
+      if (matKhau.trim() === "") {
+        hienThiLoi("dn-matkhau", "Vui lòng nhập mật khẩu.");
+        hopLe = false;
+      } else {
+        xoaLoi("dn-matkhau");
+      }
+
+      if (!hopLe) return;
+
+      // --- Tìm tài khoản trong LocalStorage ---
+      var danhSach = layDanhSachTaiKhoan();
+      var timThay = null;
+
+      for (var i = 0; i < danhSach.length; i++) {
+        if (danhSach[i].email === email.trim() && danhSach[i].matKhau === matKhau) {
+          timThay = danhSach[i];
+          break;
+        }
+      }
+
+      var tb = document.getElementById("tb-dangnhap");
+
+      if (timThay === null) {
+        // Đăng nhập thất bại
+        tb.textContent = "❌ Email hoặc mật khẩu không đúng. Vui lòng thử lại.";
+        tb.className = "thong-bao that-bai";
+        tb.style.display = "block";
+      } else {
+        // Đăng nhập thành công -> Lưu phiên đăng nhập
+        localStorage.setItem("userDangNhap", JSON.stringify(timThay));
+
+        tb.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
+        tb.className = "thong-bao thanh-cong";
+        tb.style.display = "block";
+
+        // Chuyển về trang chủ sau 1.5 giây
+        setTimeout(function () {
+          window.location.href = "index.html";
+        }, 1500);
+      }
+    }
+  </script>
+</body>
+
+</html>

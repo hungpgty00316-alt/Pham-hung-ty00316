@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMart - Quản Lý Tài Khoản</title>
+  <meta name="description" content="Quản lý thông tin tài khoản, đổi mật khẩu và quản lý người dùng trên TechMart.">
+  <script>(function(){try{if(localStorage.getItem("giaoDien")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();</script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* =============================================
+       TRANG QUẢN LÝ TÀI KHOẢN - account.html
+       ============================================= */
+
+    .trang-account {
+      min-height: 80vh;
+      background: radial-gradient(ellipse at top left, #fffbeb 0%, var(--bg-base) 55%);
+      padding: 40px 20px 60px;
+    }
+
+    .account-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .account-hero {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 36px;
+      padding: 28px 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .account-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+    .account-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; color: white; flex-shrink: 0;
+      box-shadow: var(--shadow-amber);
+    }
+    .account-hero-info h1 {
+      font-size: 22px; font-weight: 800; color: var(--text-main);
+      margin-bottom: 4px; letter-spacing: -0.3px;
+    }
+    .account-hero-info p { font-size: 13px; color: var(--text-muted); }
+    .badge-role {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; margin-top: 8px;
+    }
+    .badge-role.admin {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #92400e; border: 1px solid #fcd34d;
+    }
+    .badge-role.user { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+    /* Layout */
+    .account-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px; align-items: start;
+    }
+
+    /* Sidebar */
+    .account-sidebar {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--shadow-sm); position: sticky; top: 84px;
+    }
+    .sidebar-menu { list-style: none; padding: 8px 0; }
+    .sidebar-menu li a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px; font-size: 13.5px; font-weight: 500;
+      color: var(--text-sub); cursor: pointer;
+      transition: all var(--transition); border-left: 3px solid transparent;
+      text-decoration: none;
+    }
+    .sidebar-menu li a:hover { background: var(--primary-light); color: var(--primary-dark); border-left-color: var(--primary); }
+    .sidebar-menu li a.active { background: var(--primary-light); color: var(--primary-dark); border-left-color: var(--primary); font-weight: 600; }
+    .sidebar-menu .icon-menu { font-size: 18px; width: 22px; text-align: center; }
+    .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+
+    /* Content panels */
+    .account-content { min-width: 0; }
+    .tab-panel { display: none; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+    .tab-panel.active { display: block; }
+    .panel-header {
+      padding: 24px 28px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+      position: relative;
+    }
+    .panel-header::before {
+      content: ''; position: absolute; bottom: 0; left: 28px; right: 28px;
+      height: 2px; background: linear-gradient(90deg, var(--primary), transparent); border-radius: 2px;
+    }
+    .panel-header h2 { font-size: 18px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .panel-header p { font-size: 13px; color: var(--text-muted); }
+    .panel-body { padding: 28px; }
+
+    /* Forms */
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-grid-1 { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+    /* Button save */
+    .btn-luu {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; border: none; padding: 12px 28px;
+      border-radius: var(--radius-sm); font-size: 14px; font-weight: 700;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      transition: all var(--transition); box-shadow: var(--shadow-amber);
+    }
+    .btn-luu:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(245,158,11,0.40); }
+    .btn-luu:active { transform: translateY(0); }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--bg-base); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px 16px; text-align: center;
+      transition: all var(--transition);
+    }
+    .stat-card:hover { border-color: var(--primary); box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-2px); }
+    .stat-icon { font-size: 24px; margin-bottom: 8px; }
+    .stat-value { font-size: 24px; font-weight: 800; color: var(--primary-dark); letter-spacing: -0.5px; line-height: 1; }
+    .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); }
+    .bang-user { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .bang-user th {
+      background: linear-gradient(135deg, #fffbeb, #fff7ed);
+      padding: 13px 16px; text-align: left;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--text-sub);
+      border-bottom: 2px solid var(--border); white-space: nowrap;
+    }
+    .bang-user td { padding: 13px 16px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
+    .bang-user tr:last-child td { border-bottom: none; }
+    .bang-user tbody tr { transition: background var(--transition); }
+    .bang-user tbody tr:hover { background: #fffbeb; }
+    .user-name-cell { display: flex; align-items: center; gap: 10px; }
+    .mini-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: white; flex-shrink: 0; font-weight: 700;
+    }
+    .mini-avatar.user-type { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+
+    /* Toolbar */
+    .table-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+    .search-input {
+      padding: 9px 14px 9px 36px;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text-main);
+      background: var(--bg-base) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23a8a29e' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E") no-repeat 12px center;
+      width: 220px; outline: none; transition: all var(--transition);
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .filter-select {
+      padding: 9px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text-main);
+      background: var(--bg-card); cursor: pointer; outline: none; transition: all var(--transition);
+    }
+    .filter-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+
+    /* Action buttons */
+    .btn-icon-action {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: 600;
+      font-family: 'Inter', sans-serif; color: var(--text-sub); transition: all var(--transition);
+    }
+    .btn-icon-action:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+    .btn-icon-del {
+      background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: 600;
+      font-family: 'Inter', sans-serif; color: var(--text-sub); transition: all var(--transition);
+    }
+    .btn-icon-del:hover { border-color: var(--red); background: #fff1f2; color: var(--red-dark); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(28,25,23,0.55); backdrop-filter: blur(4px);
+      z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg-card); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg); width: 100%; max-width: 460px;
+      overflow: hidden; animation: slideUp 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #fffbeb, #ffffff);
+    }
+    .modal-header h3 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .btn-close-modal { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); line-height: 1; transition: color var(--transition); }
+    .btn-close-modal:hover { color: var(--red-dark); }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-cancel {
+      background: #f5f5f4; color: var(--text-sub); border: 1px solid var(--border);
+      padding: 10px 20px; border-radius: var(--radius-sm); cursor: pointer;
+      font-size: 13.5px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all var(--transition);
+    }
+    .btn-cancel:hover { background: var(--text-main); color: white; }
+
+    /* Alert inline */
+    .alert-inline {
+      padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px;
+      font-weight: 500; display: none; margin-top: 16px;
+    }
+    .alert-inline.ok { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 8px; }
+    .alert-inline.err { background: #fff1f2; color: var(--red-dark); border: 1px solid #fecaca; display: flex; align-items: center; gap: 8px; }
+
+    /* Strength bar */
+    .strength-bar-wrap { margin-top: 8px; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .strength-bar { height: 100%; border-radius: 99px; transition: width 0.4s ease, background 0.4s ease; width: 0%; }
+    .strength-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Access denied */
+    .access-denied { text-align: center; padding: 60px 20px; }
+    .access-denied .icon-lock { font-size: 56px; margin-bottom: 16px; display:block; }
+    .access-denied h3 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+    .access-denied p { font-size: 14px; color: var(--text-muted); }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; display:block; }
+    .empty-state p { font-size: 14px; }
+
+    /* Not logged in */
+    .chua-dang-nhap { text-align: center; padding: 80px 20px; }
+    .chua-dang-nhap .icon { font-size: 64px; margin-bottom: 20px; display: block; }
+    .chua-dang-nhap h2 { font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+    .chua-dang-nhap p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+    .btn-di-login {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; border: none; padding: 13px 30px;
+      border-radius: var(--radius-sm); font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: all var(--transition); box-shadow: var(--shadow-amber);
+    }
+    .btn-di-login:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,0.40); }
+
+    /* Count badge */
+    .count-badge {
+      display: inline-block; background: var(--primary); color: white;
+      font-size: 10px; font-weight: 700; min-width: 18px; height: 18px;
+      line-height: 18px; text-align: center; border-radius: 99px; padding: 0 5px;
+    }
+
+    /* Password tips */
+    .pass-tips {
+      background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--radius-sm);
+      padding: 14px 16px; margin-bottom: 20px; font-size: 12.5px; color: #92400e; line-height: 1.8;
+    }
+    .pass-tips strong { display: block; margin-bottom: 4px; color: #78350f; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .account-layout { grid-template-columns: 1fr; }
+      .account-sidebar { position: static; }
+      .sidebar-menu { display: flex; overflow-x: auto; padding: 0; }
+      .sidebar-menu li a { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; flex-direction: column; gap: 4px; padding: 12px 16px; font-size: 12px; }
+      .sidebar-menu li a.active, .sidebar-menu li a:hover { border-left: none; border-bottom-color: var(--primary); }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .account-hero { flex-direction: column; text-align: center; }
+      .search-input { width: 100%; }
+      .table-toolbar { flex-direction: column; align-items: stretch; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .panel-body { padding: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-trong">
+      <a href="index.html" class="logo">&#9889; TechMart</a>
+
+      <ul class="menu-nav">
+        <li><a href="index.html">Trang Ch&#7911;</a></li>
+        <li><a href="products.html">S&#7843;n Ph&#7849;m</a></li>
+        <li><a href="cart.html">Gi&#7887; H&#224;ng</a></li>
+        <li><a href="upload-product.html">Up S&#7843;n Ph&#7849;m</a></li>
+        <li><a href="account.html" class="active">T&#224;i Kho&#7843;n</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <a href="products.html?view=yeu-thich" class="icon-tim">
+          &#10084; <span id="soLuongYeuThich">0</span>
+        </a>
+
+        <a href="cart.html" class="icon-gio">
+          &#128722; <span id="soLuongGio">0</span>
+        </a>
+
+        <button type="button" class="btn-theme-toggle" onclick="doiGiaoDien()" title="Chuy&#7875;n giao di&#7879;n S&aacute;ng/T&#7889;i">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG CHÍNH -->
+  <div class="trang-account">
+    <div class="account-container">
+
+      <!-- Chưa đăng nhập -->
+      <div id="khu-chua-dang-nhap" class="chua-dang-nhap" style="display:none;">
+        <span class="icon">&#128274;</span>
+        <h2>B&#7841;n ch&#432;a &#273;&#259;ng nh&#7853;p</h2>
+        <p>Vui l&#242;ng &#273;&#259;ng nh&#7853;p &#273;&#7875; xem v&#224; qu&#7843;n l&#253; th&#244;ng tin t&#224;i kho&#7843;n c&#7911;a b&#7841;n.</p>
+        <a href="login.html" class="btn-di-login">&#128273; &#272;&#259;ng Nh&#7853;p Ngay</a>
+      </div>
+
+      <!-- Đã đăng nhập -->
+      <div id="khu-da-dang-nhap" style="display:none;">
+
+        <!-- Hero -->
+        <div class="account-hero">
+          <div class="account-avatar" id="hero-avatar">&#128100;</div>
+          <div class="account-hero-info">
+            <h1 id="hero-ten">&#272;ang t&#7843;i...</h1>
+            <p id="hero-email">--</p>
+            <span class="badge-role" id="hero-badge">--</span>
+          </div>
+        </div>
+
+        <!-- Layout 2 cột -->
+        <div class="account-layout">
+
+          <!-- Sidebar -->
+          <aside class="account-sidebar">
+            <ul class="sidebar-menu">
+              <li>
+                <a href="#" class="active" id="nav-hoso" onclick="chuyenPanel('hoso'); return false;">
+                  <span class="icon-menu">&#128100;</span> H&#7891; S&#417;
+                </a>
+              </li>
+              <li>
+                <a href="#" id="nav-matkhau" onclick="chuyenPanel('matkhau'); return false;">
+                  <span class="icon-menu">&#128272;</span> &#272;&#7893;i M&#7853;t Kh&#7849;u
+                </a>
+              </li>
+              <li>
+                <a href="#" id="nav-yeuthich" onclick="chuyenPanel('yeuthich'); return false;">
+                  <span class="icon-menu">&#10084;&#65039;</span> Y&#234;u Th&#237;ch
+                  <span class="count-badge" id="count-badge-yeuthich">0</span>
+                </a>
+              </li>
+              <li>
+                <a href="#" id="nav-donhang" onclick="chuyenPanel('donhang'); return false;">
+                  <span class="icon-menu">&#128230;</span> L&#7883;ch S&#7917; &#272;&#417;n H&#224;ng
+                  <span class="count-badge" id="count-badge-donhang">0</span>
+                </a>
+              </li>
+              <hr class="sidebar-divider">
+              <li id="nav-quanly-wrap">
+                <a href="#" id="nav-quanly" onclick="chuyenPanel('quanly'); return false;">
+                  <span class="icon-menu">&#128101;</span> Qu&#7843;n L&#253; Users
+                  <span class="count-badge" id="count-badge">0</span>
+                </a>
+              </li>
+            </ul>
+          </aside>
+
+          <!-- Content -->
+          <div class="account-content">
+
+            <!-- Panel 1: Hồ sơ -->
+            <div class="tab-panel active" id="panel-hoso">
+              <div class="panel-header">
+                <h2>&#128100; H&#7891; S&#417; C&#225; Nh&#226;n</h2>
+                <p>C&#7853;p nh&#7853;t th&#244;ng tin hi&#7875;n th&#7883; c&#7911;a b&#7841;n tr&#234;n TechMart.</p>
+              </div>
+              <div class="panel-body">
+
+                <!-- Stats -->
+                <div class="stats-row">
+                  <div class="stat-card">
+                    <div class="stat-icon">&#128722;</div>
+                    <div class="stat-value" id="stat-dathang">0</div>
+                    <div class="stat-label">S&#7843;n ph&#7849;m trong gi&#7887;</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-icon">&#128230;</div>
+                    <div class="stat-value" id="stat-sanpham">0</div>
+                    <div class="stat-label">S&#7843;n ph&#7849;m &#273;&#227; &#273;&#259;ng</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-icon">&#11088;</div>
+                    <div class="stat-value" id="stat-role">--</div>
+                    <div class="stat-label">Vai tr&#242;</div>
+                  </div>
+                </div>
+
+                <!-- Form -->
+                <div class="form-grid-2">
+                  <div class="form-nhom">
+                    <label for="hs-ten">H&#7885; v&#224; T&#234;n</label>
+                    <input type="text" id="hs-ten" placeholder="Nh&#7853;p h&#7885; v&#224; t&#234;n">
+                    <span id="loi-hs-ten" class="thong-bao-loi"></span>
+                  </div>
+                  <div class="form-nhom">
+                    <label for="hs-email">Email (kh&#244;ng th&#7875; thay &#273;&#7893;i)</label>
+                    <input type="email" id="hs-email" placeholder="Email" readonly
+                      style="background:#f5f5f4; cursor:not-allowed; opacity:0.7;">
+                  </div>
+                </div>
+
+                <div class="form-grid-2" style="margin-top:0;">
+                  <div class="form-nhom">
+                    <label for="hs-sdt">S&#7889; &#272;i&#7879;n Tho&#7841;i</label>
+                    <input type="tel" id="hs-sdt" placeholder="V&#237; d&#7909;: 0901234567">
+                    <span id="loi-hs-sdt" class="thong-bao-loi"></span>
+                  </div>
+                  <div class="form-nhom">
+                    <label for="hs-diachi">&#272;&#7883;a Ch&#7881;</label>
+                    <input type="text" id="hs-diachi" placeholder="S&#7889; nh&#224;, &#273;&#432;&#7901;ng, qu&#7853;n, t&#7881;nh...">
+                  </div>
+                </div>
+
+                <div class="form-grid-1" style="margin-top:0;">
+                  <div class="form-nhom">
+                    <label for="hs-gioithieu">Gi&#7899;i Thi&#7879;u B&#7843;n Th&#226;n</label>
+                    <textarea id="hs-gioithieu" rows="3"
+                      placeholder="V&#237; d&#7909;: T&#244;i l&#224; kh&#225;ch h&#224;ng th&#226;n thi&#7871;t c&#7911;a TechMart..."
+                      style="resize:vertical; min-height:80px;"></textarea>
+                  </div>
+                </div>
+
+                <div id="alert-hoso" class="alert-inline"></div>
+                <button class="btn-luu" onclick="luuHoSo()">&#128190; L&#432;u Thay &#272;&#7893;i</button>
+              </div>
+            </div>
+
+            <!-- Panel 2: Đổi mật khẩu -->
+            <div class="tab-panel" id="panel-matkhau">
+              <div class="panel-header">
+                <h2>&#128272; &#272;&#7893;i M&#7853;t Kh&#7849;u</h2>
+                <p>&#272;&#7843;m b&#7843;o t&#224;i kho&#7843;n an to&#224;n v&#7899;i m&#7853;t kh&#7849;u m&#7841;nh.</p>
+              </div>
+              <div class="panel-body">
+                <div class="pass-tips">
+                  <strong>&#128161; G&#7907;i &#253; t&#7841;o m&#7853;t kh&#7849;u m&#7841;nh:</strong>
+                  T&#7889;i thi&#7875;u 6 k&#253; t&#7921; &nbsp;&#8226;&nbsp; K&#7871;t h&#7907;p ch&#7919; hoa, ch&#7919; th&#432;&#7901;ng &nbsp;&#8226;&nbsp; Th&#234;m s&#7889; v&#224; k&#253; t&#7921; &#273;&#7863;c bi&#7879;t
+                </div>
+
+                <div class="form-grid-1">
+                  <div class="form-nhom">
+                    <label for="mk-cu">M&#7853;t Kh&#7849;u Hi&#7879;n T&#7841;i</label>
+                    <input type="password" id="mk-cu" placeholder="Nh&#7853;p m&#7853;t kh&#7849;u hi&#7879;n t&#7841;i">
+                    <span id="loi-mk-cu" class="thong-bao-loi"></span>
+                  </div>
+                  <div class="form-nhom">
+                    <label for="mk-moi">M&#7853;t Kh&#7849;u M&#7899;i</label>
+                    <input type="password" id="mk-moi" placeholder="T&#7889;i thi&#7875;u 6 k&#253; t&#7921;"
+                      oninput="ktraDoBenMatKhau(this.value)">
+                    <div class="strength-bar-wrap">
+                      <div class="strength-bar" id="strength-bar"></div>
+                    </div>
+                    <div class="strength-label" id="strength-label">Nh&#7853;p m&#7853;t kh&#7849;u m&#7899;i &#273;&#7875; ki&#7875;m tra &#273;&#7897; b&#7843;o m&#7853;t</div>
+                    <span id="loi-mk-moi" class="thong-bao-loi"></span>
+                  </div>
+                  <div class="form-nhom">
+                    <label for="mk-xacnhan">X&#225;c Nh&#7853;n M&#7853;t Kh&#7849;u M&#7899;i</label>
+                    <input type="password" id="mk-xacnhan" placeholder="Nh&#7853;p l&#7841;i m&#7853;t kh&#7849;u m&#7899;i">
+                    <span id="loi-mk-xacnhan" class="thong-bao-loi"></span>
+                  </div>
+                </div>
+
+                <div id="alert-matkhau" class="alert-inline"></div>
+                <button class="btn-luu" onclick="doiMatKhau()">&#128273; &#272;&#7893;i M&#7853;t Kh&#7849;u</button>
+              </div>
+            </div>
+
+            <!-- Panel: Yêu Thích -->
+            <div class="tab-panel" id="panel-yeuthich">
+              <div class="panel-header">
+                <h2>&#10084;&#65039; S&#7843;n Ph&#7849;m Y&#234;u Th&#237;ch</h2>
+                <p>Danh s&#225;ch c&#225;c s&#7843;n ph&#7849;m b&#7841;n &#273;&#227; &#273;&#225;nh d&#7845;u y&#234;u th&#237;ch.</p>
+              </div>
+              <div class="panel-body">
+                <div id="luoi-yeu-thich" class="luoi-san-pham" style="margin-bottom:0;"></div>
+              </div>
+            </div>
+
+            <!-- Panel: Lịch Sử Đơn Hàng -->
+            <div class="tab-panel" id="panel-donhang">
+              <div class="panel-header">
+                <h2>&#128230; L&#7883;ch S&#7917; &#272;&#417;n H&#224;ng</h2>
+                <p>C&#225;c &#273;&#417;n h&#224;ng b&#7841;n &#273;&#227; &#273;&#7863;t tr&#234;n TechMart.</p>
+              </div>
+              <div class="panel-body">
+                <div id="danh-sach-don-hang"></div>
+              </div>
+            </div>
+
+            <!-- Panel 3: Quản lý users (Admin) -->
+            <div class="tab-panel" id="panel-quanly">
+              <div class="panel-header">
+                <h2>&#128101; Qu&#7843;n L&#253; Ng&#432;&#7901;i D&#249;ng</h2>
+                <p>Xem, ch&#7881;nh s&#7917;a vai tr&#242; v&#224; x&#243;a t&#224;i kho&#7843;n ng&#432;&#7901;i d&#249;ng. (Ch&#7881; Admin)</p>
+              </div>
+              <div class="panel-body">
+
+                <div id="access-denied" class="access-denied" style="display:none;">
+                  <span class="icon-lock">&#128274;</span>
+                  <h3>Kh&#244;ng c&#243; quy&#7873;n truy c&#7853;p</h3>
+                  <p>Ch&#7913;c n&#259;ng n&#224;y ch&#7881; d&#224;nh cho qu&#7843;n tr&#7883; vi&#234;n (Admin).</p>
+                </div>
+
+                <div id="admin-content">
+                  <div class="table-toolbar">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                      <input type="text" class="search-input" id="search-user"
+                        placeholder="T&#236;m theo t&#234;n ho&#7863;c email..." oninput="locDanhSachUser()">
+                      <select class="filter-select" id="filter-role" onchange="locDanhSachUser()">
+                        <option value="">T&#7845;t c&#7843; vai tr&#242;</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                      </select>
+                    </div>
+                    <div id="total-user" style="font-size:13px; color:var(--text-muted); white-space:nowrap;"></div>
+                  </div>
+
+                  <div class="table-wrap">
+                    <table class="bang-user">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Ng&#432;&#7901;i D&#249;ng</th>
+                          <th>Email</th>
+                          <th>Vai Tr&#242;</th>
+                          <th>H&#224;nh &#272;&#7897;ng</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody-users">
+                        <tr>
+                          <td colspan="5">
+                            <div class="empty-state">
+                              <span class="empty-icon">&#9203;</span>
+                              <p>&#272;ang t&#7843;i d&#7919; li&#7879;u...</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="alert-quanly" class="alert-inline" style="margin-top:16px;"></div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /.account-content -->
+        </div><!-- /.account-layout -->
+      </div><!-- /#khu-da-dang-nhap -->
+
+    </div><!-- /.account-container -->
+  </div><!-- /.trang-account -->
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 TechMart Store - WEB1044 Assignment - FPT Polytechnic</p>
+  </footer>
+
+  <!-- Modal Sửa User -->
+  <div class="modal-overlay" id="modal-sua-user">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>&#9999;&#65039; Ch&#7881;nh S&#7917;a T&#224;i Kho&#7843;n</h3>
+        <button class="btn-close-modal" onclick="dongModal()">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modal-email-goc">
+        <div class="form-nhom">
+          <label for="modal-ten">H&#7885; v&#224; T&#234;n</label>
+          <input type="text" id="modal-ten" placeholder="Nh&#7853;p h&#7885; v&#224; t&#234;n">
+          <span id="loi-modal-ten" class="thong-bao-loi"></span>
+        </div>
+        <div class="form-nhom">
+          <label for="modal-email">Email (kh&#244;ng th&#7875; thay &#273;&#7893;i)</label>
+          <input type="email" id="modal-email" readonly style="background:#f5f5f4; cursor:not-allowed; opacity:0.7;">
+        </div>
+        <div class="form-nhom">
+          <label for="modal-vaitro">Vai Tr&#242;</label>
+          <select id="modal-vaitro" class="filter-select" style="width:100%; padding:10px 14px;">
+            <option value="user">User (Kh&#225;ch h&#224;ng)</option>
+            <option value="admin">Admin (Qu&#7843;n tr&#7883; vi&#234;n)</option>
+          </select>
+        </div>
+        <div class="form-nhom">
+          <label for="modal-matkhau">M&#7853;t Kh&#7849;u M&#7899;i <span style="color:var(--text-muted); font-weight:400;">(&#273;&#7875; tr&#7889;ng n&#7871;u kh&#244;ng &#273;&#7893;i)</span></label>
+          <input type="password" id="modal-matkhau" placeholder="&#272;&#7875; tr&#7889;ng = kh&#244;ng thay &#273;&#7893;i">
+        </div>
+        <div id="alert-modal" class="alert-inline"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="dongModal()">H&#7911;y</button>
+        <button class="btn-luu" style="padding:10px 22px;" onclick="luuSuaUser()">&#128190; L&#432;u</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Xóa User -->
+  <div class="modal-overlay" id="modal-xoa-user">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>&#128465;&#65039; X&#225;c Nh&#7853;n X&#243;a</h3>
+        <button class="btn-close-modal" onclick="dongModalXoa()">&#10005;</button>
+      </div>
+      <div class="modal-body" style="text-align:center; padding:32px 24px;">
+        <div style="font-size:48px; margin-bottom:16px;">&#9888;&#65039;</div>
+        <p style="font-size:15px; color:var(--text-main); margin-bottom:8px;">
+          B&#7841;n c&#243; ch&#7855;c mu&#7889;n x&#243;a t&#224;i kho&#7843;n<br>
+          <strong id="xoa-ten-user" style="color:var(--red-dark);">--</strong>?
+        </p>
+        <p style="font-size:13px; color:var(--text-muted);">H&#224;nh &#273;&#7897;ng n&#224;y kh&#244;ng th&#7875; ho&#224;n t&#225;c.</p>
+        <input type="hidden" id="xoa-email-user">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="dongModalXoa()">H&#7911;y</button>
+        <button class="btn-luu"
+          style="background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 4px 16px rgba(239,68,68,0.35); padding:10px 22px;"
+          onclick="xacNhanXoaUser()">&#128465;&#65039; X&#243;a</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* =============================================
+       TRANG QUẢN LÝ TÀI KHOẢN - account.html
+       ============================================= */
+
+    var userHienTai = null;
+
+    // KHỞI ĐỘNG
+    (function khoiDong() {
+      var raw = localStorage.getItem("userDangNhap");
+      if (!raw) {
+        document.getElementById("khu-chua-dang-nhap").style.display = "block";
+        return;
+      }
+      try { userHienTai = JSON.parse(raw); } catch (e) {
+        document.getElementById("khu-chua-dang-nhap").style.display = "block";
+        return;
+      }
+      document.getElementById("khu-da-dang-nhap").style.display = "block";
+      renderHero();
+      doDatStats();
+      doDienHoSo();
+      if (userHienTai.vaiTro !== "admin") {
+        document.getElementById("nav-quanly-wrap").style.display = "none";
+      }
+      capNhatSoLuongGio();
+      if (typeof capNhatBadgeYeuThich === "function") capNhatBadgeYeuThich();
+      if (typeof capNhatNutGiaoDien === "function") capNhatNutGiaoDien();
+
+      var badgeTim = document.getElementById("count-badge-yeuthich");
+      if (badgeTim && typeof layYeuThich === "function") badgeTim.textContent = layYeuThich().length;
+      var badgeDon = document.getElementById("count-badge-donhang");
+      if (badgeDon && typeof layLichSuDonHang === "function") {
+        var tatCaDon = layLichSuDonHang().filter(function (dh) { return dh.email === userHienTai.email; });
+        badgeDon.textContent = tatCaDon.length;
+      }
+
+      // Mở đúng panel nếu URL có #donhang hoặc #yeuthich (ví dụ sau khi thanh toán)
+      var hash = window.location.hash.replace("#", "");
+      if (hash === "donhang" || hash === "yeuthich") {
+        chuyenPanel(hash);
+      }
+    })();
+
+    // RENDER HERO
+    function renderHero() {
+      var ten = (userHienTai.ten || "Nguoi Dung").trim();
+      document.getElementById("hero-avatar").textContent = ten.charAt(0).toUpperCase();
+      document.getElementById("hero-ten").textContent = ten;
+      document.getElementById("hero-email").textContent = userHienTai.email || "--";
+      var badge = document.getElementById("hero-badge");
+      if (userHienTai.vaiTro === "admin") {
+        badge.textContent = "Quan Tri Vien (Admin)";
+        badge.className = "badge-role admin";
+      } else {
+        badge.textContent = "Khach Hang";
+        badge.className = "badge-role user";
+      }
+    }
+
+    // STATS
+    function doDatStats() {
+      var gioHang = [];
+      try { gioHang = JSON.parse(localStorage.getItem("gioHang") || "[]"); } catch (e) {}
+      var tong = 0;
+      for (var i = 0; i < gioHang.length; i++) tong += (gioHang[i].soLuong || 1);
+      document.getElementById("stat-dathang").textContent = tong;
+
+      var dsSP = [];
+      try { if (typeof layDanhSachSanPham === "function") dsSP = layDanhSachSanPham(); } catch (e) {}
+      document.getElementById("stat-sanpham").textContent = dsSP.length;
+      document.getElementById("stat-role").textContent = userHienTai.vaiTro === "admin" ? "Admin" : "User";
+    }
+
+    // ĐIỀN HỒ SƠ
+    function doDienHoSo() {
+      document.getElementById("hs-ten").value = userHienTai.ten || "";
+      document.getElementById("hs-email").value = userHienTai.email || "";
+      document.getElementById("hs-sdt").value = userHienTai.sdt || "";
+      document.getElementById("hs-diachi").value = userHienTai.diaChi || "";
+      document.getElementById("hs-gioithieu").value = userHienTai.gioiThieu || "";
+    }
+
+    // CHUYỂN PANEL
+    function chuyenPanel(ten) {
+      var panels = document.querySelectorAll(".tab-panel");
+      for (var i = 0; i < panels.length; i++) panels[i].classList.remove("active");
+      var navs = document.querySelectorAll(".sidebar-menu a");
+      for (var j = 0; j < navs.length; j++) navs[j].classList.remove("active");
+      document.getElementById("panel-" + ten).classList.add("active");
+      document.getElementById("nav-" + ten).classList.add("active");
+      if (ten === "quanly") hienThiBangUsers();
+      if (ten === "yeuthich") renderYeuThichAccount();
+      if (ten === "donhang") renderLichSuDonHang();
+    }
+
+    // SẢN PHẨM YÊU THÍCH
+    function renderYeuThichAccount() {
+      var khung = document.getElementById("luoi-yeu-thich");
+      if (!khung) return;
+      var dsYeuThich = (typeof layYeuThich === "function") ? layYeuThich() : [];
+      var dsSP = (typeof layDanhSachSanPham === "function") ? layDanhSachSanPham() : [];
+      var ketQua = dsSP.filter(function (sp) { return dsYeuThich.indexOf(sp.id) !== -1; });
+
+      var badge = document.getElementById("count-badge-yeuthich");
+      if (badge) badge.textContent = ketQua.length;
+
+      if (ketQua.length === 0) {
+        khung.innerHTML = '<div class="empty-state"><span class="empty-icon">&#128148;</span><p>B&#7841;n ch&#432;a c&#243; s&#7843;n ph&#7849;m y&#234;u th&#237;ch n&#224;o.</p></div>';
+        return;
+      }
+
+      if (typeof hienThiSanPham === "function") {
+        var backup = khung.id;
+        khung.id = "danhSachSanPham";
+        hienThiSanPham(ketQua);
+        khung.id = backup;
+      }
+    }
+
+    // LỊCH SỬ ĐƠN HÀNG
+    function renderLichSuDonHang() {
+      var khung = document.getElementById("danh-sach-don-hang");
+      if (!khung) return;
+      var tatCa = (typeof layLichSuDonHang === "function") ? layLichSuDonHang() : [];
+      var donCuaToi = tatCa.filter(function (dh) { return dh.email === userHienTai.email; });
+
+      var badge = document.getElementById("count-badge-donhang");
+      if (badge) badge.textContent = donCuaToi.length;
+
+      if (donCuaToi.length === 0) {
+        khung.innerHTML = '<div class="empty-state"><span class="empty-icon">&#128230;</span><p>B&#7841;n ch&#432;a c&#243; &#273;&#417;n h&#224;ng n&#224;o. <a href="products.html" style="color:var(--primary-dark); font-weight:600;">Mua s&#7855;m ngay</a></p></div>';
+        return;
+      }
+
+      var html = "";
+      for (var i = 0; i < donCuaToi.length; i++) {
+        var dh = donCuaToi[i];
+        var ngay = new Date(dh.ngayDat);
+        var ngayHienThi = ngay.toLocaleString("vi-VN");
+        var soMon = 0;
+        for (var j = 0; j < dh.sanPham.length; j++) soMon += (dh.sanPham[j].soLuong || 1);
+
+        html += '<div style="border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:14px; overflow:hidden;">';
+        html += '  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; padding:14px 18px; background:var(--bg-base); border-bottom:1px solid var(--border);">';
+        html += '    <div><strong>' + dh.id + '</strong> <span style="color:var(--text-muted); font-size:12px;"> &middot; ' + ngayHienThi + '</span></div>';
+        html += '    <span class="badge-nhom badge-moi">' + dh.trangThai + '</span>';
+        html += '  </div>';
+        html += '  <div style="padding:14px 18px;">';
+        for (var k = 0; k < dh.sanPham.length; k++) {
+          var sp = dh.sanPham[k];
+          html += '    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:13.5px;">';
+          html += '      <img src="' + sp.hinhAnh + '" class="hinh-gio" onerror="this.src=\'images/default.jpg\'">';
+          html += '      <span style="flex:1;">' + sp.ten + ' <span style="color:var(--text-muted);">x' + sp.soLuong + '</span></span>';
+          html += '      <span style="font-weight:600;">' + formatTien(sp.gia * sp.soLuong) + '</span>';
+          html += '    </div>';
+        }
+        html += '  </div>';
+        html += '  <div style="display:flex; justify-content:space-between; padding:12px 18px; background:var(--bg-base); border-top:1px solid var(--border); font-size:13.5px;">';
+        html += '    <span style="color:var(--text-muted);">' + soMon + ' s&#7843;n ph&#7849;m</span>';
+        html += '    <span>T&#7893;ng: <strong style="color:var(--accent); font-size:15px;">' + formatTien(dh.tongTien) + '</strong></span>';
+        html += '  </div>';
+        html += '</div>';
+      }
+      khung.innerHTML = html;
+    }
+
+    // LƯU HỒ SƠ
+    function luuHoSo() {
+      var ten = document.getElementById("hs-ten").value.trim();
+      var sdt = document.getElementById("hs-sdt").value.trim();
+      var hopLe = true;
+      if (ten === "") { hienThiLoi("hs-ten", "Vui long nhap ho va ten."); hopLe = false; }
+      else { xoaLoi("hs-ten"); }
+      var regexSdt = /^(0|\+84)[0-9]{8,10}$/;
+      if (sdt !== "" && !regexSdt.test(sdt)) { hienThiLoi("hs-sdt", "So dien thoai khong hop le (VD: 0901234567)."); hopLe = false; }
+      else { xoaLoi("hs-sdt"); }
+      if (!hopLe) return;
+
+      userHienTai.ten = ten;
+      userHienTai.sdt = sdt;
+      userHienTai.diaChi = document.getElementById("hs-diachi").value.trim();
+      userHienTai.gioiThieu = document.getElementById("hs-gioithieu").value.trim();
+      localStorage.setItem("userDangNhap", JSON.stringify(userHienTai));
+
+      var ds = layDanhSachTaiKhoanLocal();
+      for (var i = 0; i < ds.length; i++) {
+        if (ds[i].email === userHienTai.email) {
+          ds[i].ten = userHienTai.ten; ds[i].sdt = userHienTai.sdt;
+          ds[i].diaChi = userHienTai.diaChi; ds[i].gioiThieu = userHienTai.gioiThieu;
+          break;
+        }
+      }
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(ds));
+      renderHero();
+      hienAlertInline("alert-hoso", "ok", "Da luu thong tin ho so thanh cong!");
+    }
+
+    // ĐỔI MẬT KHẨU
+    function doiMatKhau() {
+      var mkCu = document.getElementById("mk-cu").value;
+      var mkMoi = document.getElementById("mk-moi").value;
+      var mkXN = document.getElementById("mk-xacnhan").value;
+      var hopLe = true;
+      if (mkCu.trim() === "") { hienThiLoi("mk-cu", "Vui long nhap mat khau hien tai."); hopLe = false; }
+      else if (mkCu !== userHienTai.matKhau) { hienThiLoi("mk-cu", "Mat khau hien tai khong dung."); hopLe = false; }
+      else { xoaLoi("mk-cu"); }
+      if (mkMoi.trim() === "") { hienThiLoi("mk-moi", "Vui long nhap mat khau moi."); hopLe = false; }
+      else if (mkMoi.length < 6) { hienThiLoi("mk-moi", "Mat khau moi phai co it nhat 6 ky tu."); hopLe = false; }
+      else if (mkMoi === mkCu) { hienThiLoi("mk-moi", "Mat khau moi phai khac mat khau cu."); hopLe = false; }
+      else { xoaLoi("mk-moi"); }
+      if (mkXN.trim() === "") { hienThiLoi("mk-xacnhan", "Vui long nhap lai mat khau moi."); hopLe = false; }
+      else if (mkXN !== mkMoi) { hienThiLoi("mk-xacnhan", "Mat khau nhap lai khong khop."); hopLe = false; }
+      else { xoaLoi("mk-xacnhan"); }
+      if (!hopLe) return;
+
+      userHienTai.matKhau = mkMoi;
+      localStorage.setItem("userDangNhap", JSON.stringify(userHienTai));
+      var ds = layDanhSachTaiKhoanLocal();
+      for (var i = 0; i < ds.length; i++) {
+        if (ds[i].email === userHienTai.email) { ds[i].matKhau = mkMoi; break; }
+      }
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(ds));
+      document.getElementById("mk-cu").value = "";
+      document.getElementById("mk-moi").value = "";
+      document.getElementById("mk-xacnhan").value = "";
+      document.getElementById("strength-bar").style.width = "0%";
+      document.getElementById("strength-label").textContent = "Nhap mat khau moi de kiem tra do bao mat";
+      document.getElementById("strength-label").style.color = "";
+      hienAlertInline("alert-matkhau", "ok", "Doi mat khau thanh cong!");
+    }
+
+    // ĐO ĐỘ BỀN MẬT KHẨU
+    function ktraDoBenMatKhau(val) {
+      var bar = document.getElementById("strength-bar");
+      var label = document.getElementById("strength-label");
+      if (val.length === 0) { bar.style.width = "0%"; label.textContent = "Nhap mat khau moi de kiem tra do bao mat"; label.style.color = ""; return; }
+      var diem = 0;
+      if (val.length >= 6) diem++;
+      if (val.length >= 10) diem++;
+      if (/[A-Z]/.test(val)) diem++;
+      if (/[0-9]/.test(val)) diem++;
+      if (/[^A-Za-z0-9]/.test(val)) diem++;
+      var mucDo = ["", "Rat yeu", "Yeu", "Trung binh", "Manh", "Rat manh"];
+      var mauSac = ["", "#ef4444", "#f97316", "#eab308", "#22c55e", "#16a34a"];
+      var phanTram = [0, 20, 40, 60, 80, 100];
+      bar.style.width = phanTram[diem] + "%";
+      bar.style.background = mauSac[diem];
+      label.textContent = "Do bao mat: " + mucDo[diem];
+      label.style.color = mauSac[diem];
+    }
+
+    // QUẢN LÝ USERS
+    function hienThiBangUsers() {
+      var adminContent = document.getElementById("admin-content");
+      var denied = document.getElementById("access-denied");
+      if (userHienTai.vaiTro !== "admin") {
+        adminContent.style.display = "none"; denied.style.display = "block"; return;
+      }
+      adminContent.style.display = "block"; denied.style.display = "none";
+      locDanhSachUser();
+    }
+
+    function locDanhSachUser() {
+      var ds = layDanhSachTaiKhoanLocal();
+      var tuKhoa = (document.getElementById("search-user").value || "").toLowerCase();
+      var filterRole = document.getElementById("filter-role").value;
+      var dsLoc = ds.filter(function(u) {
+        var match = true;
+        if (tuKhoa) match = (u.ten || "").toLowerCase().includes(tuKhoa) || (u.email || "").toLowerCase().includes(tuKhoa);
+        if (filterRole) match = match && u.vaiTro === filterRole;
+        return match;
+      });
+      document.getElementById("count-badge").textContent = ds.length;
+      document.getElementById("total-user").textContent = "Hien thi " + dsLoc.length + " / " + ds.length + " tai khoan";
+      renderBangUsers(dsLoc);
+    }
+
+    function renderBangUsers(ds) {
+      var tbody = document.getElementById("tbody-users");
+      if (ds.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><span class="empty-icon">&#128269;</span><p>Khong tim thay tai khoan nao.</p></div></td></tr>';
+        return;
+      }
+      var html = "";
+      for (var i = 0; i < ds.length; i++) {
+        var u = ds[i];
+        var kyTuDau = (u.ten || "?").charAt(0).toUpperCase();
+        var laChinh = (u.email === userHienTai.email);
+        var avClass = u.vaiTro === "admin" ? "" : " user-type";
+        var badgeHTML = u.vaiTro === "admin"
+          ? '<span class="badge-nhom badge-hot">Admin</span>'
+          : '<span class="badge-nhom badge-moi">User</span>';
+        var actionHTML = laChinh
+          ? '<span style="font-size:12px; color:var(--text-muted);">-- Tai khoan cua ban</span>'
+          : '<button class="btn-icon-action" onclick="moModalSua(\'' + escJS(u.email) + '\')">&#9999; Sua</button> <button class="btn-icon-del" onclick="moModalXoa(\'' + escJS(u.email) + '\',\'' + escJS(u.ten || u.email) + '\')">&#128465; Xoa</button>';
+        html += '<tr><td>' + (i+1) + '</td><td><div class="user-name-cell"><div class="mini-avatar' + avClass + '">' + kyTuDau + '</div><div><div style="font-weight:600;">' + (u.ten || "--") + '</div>' + (laChinh ? '<div style="font-size:11px;color:var(--primary-dark);">* Dang dang nhap</div>' : '') + '</div></div></td><td style="color:var(--text-sub);">' + (u.email || "--") + '</td><td>' + badgeHTML + '</td><td>' + actionHTML + '</td></tr>';
+      }
+      tbody.innerHTML = html;
+    }
+
+    // MODAL SỬA
+    function moModalSua(email) {
+      var ds = layDanhSachTaiKhoanLocal();
+      var user = null;
+      for (var i = 0; i < ds.length; i++) { if (ds[i].email === email) { user = ds[i]; break; } }
+      if (!user) return;
+      document.getElementById("modal-email-goc").value = user.email;
+      document.getElementById("modal-ten").value = user.ten || "";
+      document.getElementById("modal-email").value = user.email;
+      document.getElementById("modal-vaitro").value = user.vaiTro || "user";
+      document.getElementById("modal-matkhau").value = "";
+      var al = document.getElementById("alert-modal");
+      al.className = "alert-inline"; al.style.display = "none";
+      document.getElementById("modal-sua-user").classList.add("open");
+    }
+    function dongModal() { document.getElementById("modal-sua-user").classList.remove("open"); }
+
+    function luuSuaUser() {
+      var emailGoc = document.getElementById("modal-email-goc").value;
+      var tenMoi = document.getElementById("modal-ten").value.trim();
+      var vaiTroMoi = document.getElementById("modal-vaitro").value;
+      var mkMoi = document.getElementById("modal-matkhau").value;
+      if (tenMoi === "") { hienAlertInline("alert-modal", "err", "Vui long nhap ho va ten."); return; }
+      if (mkMoi !== "" && mkMoi.length < 6) { hienAlertInline("alert-modal", "err", "Mat khau moi phai co it nhat 6 ky tu."); return; }
+      var ds = layDanhSachTaiKhoanLocal();
+      for (var i = 0; i < ds.length; i++) {
+        if (ds[i].email === emailGoc) {
+          ds[i].ten = tenMoi; ds[i].vaiTro = vaiTroMoi;
+          if (mkMoi !== "") ds[i].matKhau = mkMoi;
+          break;
+        }
+      }
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(ds));
+      dongModal(); locDanhSachUser();
+      hienAlertInline("alert-quanly", "ok", "Da cap nhat tai khoan thanh cong!");
+    }
+
+    // MODAL XÓA
+    function moModalXoa(email, ten) {
+      document.getElementById("xoa-email-user").value = email;
+      document.getElementById("xoa-ten-user").textContent = ten || email;
+      document.getElementById("modal-xoa-user").classList.add("open");
+    }
+    function dongModalXoa() { document.getElementById("modal-xoa-user").classList.remove("open"); }
+
+    function xacNhanXoaUser() {
+      var email = document.getElementById("xoa-email-user").value;
+      if (email === userHienTai.email) { dongModalXoa(); hienAlertInline("alert-quanly", "err", "Khong the xoa tai khoan dang dang nhap!"); return; }
+      var ds = layDanhSachTaiKhoanLocal();
+      ds = ds.filter(function(u) { return u.email !== email; });
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(ds));
+      dongModalXoa(); locDanhSachUser();
+      hienAlertInline("alert-quanly", "ok", "Da xoa tai khoan thanh cong!");
+    }
+
+    // TIỆN ÍCH
+    function layDanhSachTaiKhoanLocal() {
+      try { var d = localStorage.getItem("danhSachTaiKhoan"); if (d) return JSON.parse(d); } catch (e) {}
+      var mac = [
+        { ten: "Quan Tri Vien (Admin)", email: "admin@techmart.com", matKhau: "admin123", vaiTro: "admin" },
+        { ten: "Khach Hang Mau", email: "user@techmart.com", matKhau: "user123", vaiTro: "user" }
+      ];
+      localStorage.setItem("danhSachTaiKhoan", JSON.stringify(mac));
+      return mac;
+    }
+
+    function hienAlertInline(id, loai, nd) {
+      var el = document.getElementById(id);
+      el.textContent = nd; el.className = "alert-inline " + loai; el.style.display = "flex";
+      setTimeout(function() { el.style.display = "none"; }, 3500);
+    }
+
+    function escJS(s) { return (s || "").replace(/\\/g,"\\\\").replace(/'/g,"\\'"); }
+
+    function capNhatSoLuongGio() {
+      var gio = []; try { gio = JSON.parse(localStorage.getItem("gioHang") || "[]"); } catch(e){}
+      var t = 0; for (var i = 0; i < gio.length; i++) t += (gio[i].soLuong || 1);
+      var el = document.getElementById("soLuongGio"); if (el) el.textContent = t;
+    }
+
+    // Đóng modal khi click ngoài
+    document.getElementById("modal-sua-user").addEventListener("click", function(e) { if (e.target === this) dongModal(); });
+    document.getElementById("modal-xoa-user").addEventListener("click", function(e) { if (e.target === this) dongModalXoa(); });
+  </script>
+
+</body>
+</html>

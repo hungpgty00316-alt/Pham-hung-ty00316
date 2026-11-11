@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechMart - Giỏ Hàng</title>
+  <script>(function(){try{if(localStorage.getItem("giaoDien")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}})();</script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-trong">
+      <a href="index.html" class="logo">⚡ TechMart</a>
+
+      <ul class="menu-nav">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html">Sản Phẩm</a></li>
+        <li><a href="cart.html" class="active">Giỏ Hàng</a></li>
+        <li><a href="upload-product.html">Up Sản Phẩm</a></li>
+        <li><a href="login.html">Đăng Nhập</a></li>
+        <li><a href="account.html">Tài Khoản</a></li>
+      </ul>
+
+      <div class="header-actions">
+        <a href="products.html?view=yeu-thich" class="icon-tim">
+          ❤ <span id="soLuongYeuThich">0</span>
+        </a>
+
+        <a href="cart.html" class="icon-gio">
+          🛒 <span id="soLuongGio">0</span>
+        </a>
+
+        <button type="button" class="btn-theme-toggle" onclick="doiGiaoDien()" title="Chuyển giao diện Sáng/Tối">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG TRANG GIỎ HÀNG -->
+  <div class="container">
+
+    <h1 class="tieu-de-trang">Giỏ Hàng Của Bạn</h1>
+
+    <!-- Hiển thị khi giỏ hàng trống -->
+    <div id="gioTrong" class="thong-bao-gio-trong" style="display: none;">
+      <p>🛒 Giỏ hàng của bạn đang trống!</p>
+      <a href="products.html" class="btn-banner" style="background:#1a73e8; color:white; padding:10px 20px; border-radius:4px;">Tiếp Tục Mua Sắm</a>
+    </div>
+
+    <!-- Hiển thị khi có sản phẩm trong giỏ -->
+    <div id="noiDungGio" style="display: none;">
+
+      <!-- Bảng danh sách sản phẩm trong giỏ -->
+      <table class="bang-gio">
+        <thead>
+          <tr>
+            <th>Sản Phẩm</th>
+            <th>Đơn Giá</th>
+            <th>Số Lượng</th>
+            <th>Thành Tiền</th>
+            <th>Xóa</th>
+          </tr>
+        </thead>
+        <tbody id="bangGioHang">
+          <!-- JS sẽ render dòng sản phẩm vào đây -->
+        </tbody>
+      </table>
+
+      <!-- Tổng tiền -->
+      <div class="khu-vuc-tong">
+        <p>Tổng Tiền: <span id="tongTien">0 đ</span></p>
+        <button class="btn-thanh-toan" onclick="xuLyThanhToan()">💳 Tiến Hành Thanh Toán</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 TechMart Store - WEB1044 Assignment - FPT Polytechnic</p>
+  </footer>
+
+  <!-- Nhúng JavaScript -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
